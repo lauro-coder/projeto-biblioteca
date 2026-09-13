@@ -8,15 +8,17 @@
             </div>
         @endif
 
-        <a href="{{ route('livros.create') }}" class="text-blue-600 underline">Cadastrar novo livro</a>
+        @if (auth()->user()->isAdmin() || auth()->user()->isBibliotecario())
+            <a href="{{ route('livros.create') }}" class="text-blue-600 underline">Cadastrar novo livro</a>
+        @endif
 
         <table class="w-full mt-4 border-collapse">
             <thead>
                 <tr class="text-left border-b">
-                    <th>Título</th>
+                    <th>Titulo</th>
                     <th>Ano</th>
                     <th>Autor</th>
-                    <th>Ações</th>
+                    <th>Acoes</th>
                 </tr>
             </thead>
             <tbody>
@@ -26,13 +28,15 @@
                         <td>{{ $livro->ano }}</td>
                         <td>{{ $livro->autor->nome }}</td>
                         <td>
-                            <a href="{{ route('livros.edit', $livro->id) }}" class="text-blue-600 underline">Editar</a>
+                            @if (auth()->user()->isAdmin() || auth()->user()->isBibliotecario())
+                                <a href="{{ route('livros.edit', $livro->id) }}" class="text-blue-600 underline">Editar</a>
 
-                            <form action="{{ route('livros.destroy', $livro->id) }}" method="POST" class="inline" onsubmit="return confirm('Tem certeza?')">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit" class="text-red-600 underline">Excluir</button>
-                            </form>
+                                <form action="{{ route('livros.destroy', $livro->id) }}" method="POST" class="inline" onsubmit="return confirm('Tem certeza?')">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="text-red-600 underline">Excluir</button>
+                                </form>
+                            @endif
                         </td>
                     </tr>
                 @endforeach
