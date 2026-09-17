@@ -1,40 +1,22 @@
 <x-app-layout>
-    <div class="p-6">
-        <h1 class="text-2xl font-bold mb-4">Cadastrar Livro</h1>
+    <x-slot name="header">
+        <h2 class="font-semibold text-xl text-gray-800 leading-tight">Cadastrar Livro</h2>
+    </x-slot>
 
-        @if ($errors->any())
-            <div class="bg-red-100 text-red-800 p-3 rounded mb-4">
-                <ul>
-                    @foreach ($errors->all() as $erro)
-                        <li>{{ $erro }}</li>
-                    @endforeach
-                </ul>
+    <div class="py-8">
+        <div class="max-w-3xl mx-auto sm:px-6 lg:px-8">
+            <div class="bg-white shadow-sm sm:rounded-lg p-6">
+                @include('partials.mensagens')
+
+                <form method="POST" action="{{ route('livros.store') }}">
+                    @csrf
+
+                    @include('livros.form')
+
+                    <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded">Salvar</button>
+                    <a href="{{ route('livros.index') }}" class="ms-2 text-gray-700 underline">Cancelar</a>
+                </form>
             </div>
-        @endif
-
-        <form method="POST" action="{{ route('livros.store') }}">
-            @csrf
-
-            <div class="mb-3">
-                <label>Título</label>
-                <input type="text" name="titulo" value="{{ old('titulo') }}" class="border w-full p-2">
-            </div>
-
-            <div class="mb-3">
-                <label>Ano</label>
-                <input type="number" name="ano" value="{{ old('ano') }}" class="border w-full p-2">
-            </div>
-
-            <div class="mb-3">
-                <label>Autor</label>
-                <select name="autor_id" class="border w-full p-2">
-                    @foreach ($autores as $autor)
-                        <option value="{{ $autor->id }}">{{ $autor->nome }}</option>
-                    @endforeach
-                </select>
-            </div>
-
-            <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded">Salvar</button>
-        </form>
+        </div>
     </div>
 </x-app-layout>
