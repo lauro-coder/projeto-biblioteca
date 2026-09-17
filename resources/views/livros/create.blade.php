@@ -1,22 +1,26 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">Cadastrar Livro</h2>
+        <x-cabecalho titulo="Novo livro" subtitulo="Preencha os dados para cadastrar um livro no acervo" :voltar="route('livros.index')" />
     </x-slot>
 
     <div class="py-8">
-        <div class="max-w-3xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white shadow-sm sm:rounded-lg p-6">
-                @include('partials.mensagens')
+        <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+            @include('partials.mensagens')
 
+            <x-card>
                 <form method="POST" action="{{ route('livros.store') }}">
                     @csrf
 
-                    @include('livros.form')
+                    <div class="p-6 sm:p-8">
+                        @include('livros.form')
+                    </div>
 
-                    <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded">Salvar</button>
-                    <a href="{{ route('livros.index') }}" class="ms-2 text-gray-700 underline">Cancelar</a>
+                    <div class="flex justify-end gap-2 border-t border-slate-200 bg-slate-50 px-6 py-4 rounded-b-xl">
+                        <x-botao :href="route('livros.index')" variante="secundario">Cancelar</x-botao>
+                        <x-botao icone="sucesso">Salvar</x-botao>
+                    </div>
                 </form>
-            </div>
+            </x-card>
         </div>
     </div>
 </x-app-layout>

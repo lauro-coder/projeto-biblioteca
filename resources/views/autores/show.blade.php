@@ -1,56 +1,62 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">{{ $autor->nome }}</h2>
+        <x-cabecalho :titulo="$autor->nome" subtitulo="Detalhes do autor" :voltar="route('autores.index')">
+            @can('update', $autor)
+                <x-botao :href="route('autores.edit', $autor)" variante="secundario" icone="editar">Editar</x-botao>
+            @endcan
+
+            @can('delete', $autor)
+                <form action="{{ route('autores.destroy', $autor) }}" method="POST" onsubmit="return confirm('Tem certeza que deseja excluir este autor?')">
+                    @csrf
+                    @method('DELETE')
+                    <x-botao variante="perigo" icone="excluir">Excluir</x-botao>
+                </form>
+            @endcan
+        </x-cabecalho>
     </x-slot>
 
     <div class="py-8">
-        <div class="max-w-3xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white shadow-sm sm:rounded-lg p-6">
-                @include('partials.mensagens')
+        <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
+            @include('partials.mensagens')
 
-                <dl class="space-y-3">
-                    <div>
-                        <dt class="text-sm text-gray-500">Nome</dt>
-                        <dd class="text-lg">{{ $autor->nome }}</dd>
-                    </div>
-                    <div>
-                        <dt class="text-sm text-gray-500">Nacionalidade</dt>
-                        <dd class="text-lg">{{ $autor->nacionalidade ?? 'Não informada' }}</dd>
-                    </div>
-                </dl>
+            <x-card class="p-6 flex items-center gap-5">
+                <span class="flex h-16 w-16 shrink-0 items-center justify-center rounded-full bg-amber-100 text-2xl font-bold text-amber-700">
+                    {{ mb_strtoupper(mb_substr($autor->nome, 0, 1)) }}
+                </span>
+                <div>
+                    <h2 class="text-xl font-bold text-slate-900">{{ $autor->nome }}</h2>
+                    <p class="flex items-center gap-1 text-slate-500">
+                        <x-icone nome="globo" class="w-4 h-4" />
+                        {{ $autor->nacionalidade ?? 'Nacionalidade não informada' }}
+                    </p>
+                </div>
+            </x-card>
 
-                <h3 class="font-semibold text-lg mt-6 mb-2">Livros deste autor ({{ $livros->count() }})</h3>
+            <div>
+                <h3 class="mb-3 text-lg font-semibold text-slate-900">
+                    Livros deste autor
+                    <span class="ms-1 rounded-full bg-slate-200 px-2 py-0.5 text-sm font-medium text-slate-700">{{ $livros->count() }}</span>
+                </h3>
 
                 @if ($livros->isEmpty())
-                    <p class="text-gray-600">Nenhum livro cadastrado para este autor.</p>
+                    <x-card>
+                        <x-estado-vazio icone="livro" titulo="Nenhum livro cadastrado para este autor" />
+                    </x-card>
                 @else
-                    <ul class="list-disc ms-5">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         @foreach ($livros as $livro)
-                            <li>
-                                <a href="{{ route('livros.show', $livro) }}" class="text-blue-600 underline">{{ $livro->titulo }}</a>
-                                @if ($livro->ano)
-                                    ({{ $livro->ano }})
-                                @endif
-                            </li>
+                            <a href="{{ route('livros.show', $livro) }}" class="block group">
+                                <x-card class="flex items-center gap-4 p-4 group-hover:ring-indigo-300 group-hover:shadow-md transition">
+                                    @include('livros.capa', ['livro' => $livro, 'tamanho' => 'pequena'])
+                                    <div>
+                                        <p class="font-medium text-slate-900 group-hover:text-indigo-600">{{ $livro->titulo }}</p>
+                                        <p class="text-sm text-slate-500">{{ $livro->ano ?? 'Ano não informado' }}</p>
+                                    </div>
+                                </x-card>
+                            </a>
                         @endforeach
-                    </ul>
+                    </div>
                 @endif
-
-                <div class="mt-6 space-x-2">
-                    <a href="{{ route('autores.index') }}" class="text-gray-700 underline">Voltar</a>
-
-                    @can('update', $autor)
-                        <a href="{{ route('autores.edit', $autor) }}" class="text-blue-600 underline">Editar</a>
-                    @endcan
-
-                    @can('delete', $autor)
-                        <form action="{{ route('autores.destroy', $autor) }}" method="POST" class="inline" onsubmit="return confirm('Tem certeza que deseja excluir este autor?')">
-                            @csrf
-                            @method('DELETE')
-                            <button type="submit" class="text-red-600 underline">Excluir</button>
-                        </form>
-                    @endcan
-                </div>
             </div>
         </div>
     </div>

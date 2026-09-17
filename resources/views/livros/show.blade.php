@@ -1,48 +1,53 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">{{ $livro->titulo }}</h2>
+        <x-cabecalho :titulo="$livro->titulo" subtitulo="Detalhes do livro" :voltar="route('livros.index')">
+            @can('update', $livro)
+                <x-botao :href="route('livros.edit', $livro)" variante="secundario" icone="editar">Editar</x-botao>
+            @endcan
+
+            @can('delete', $livro)
+                <form action="{{ route('livros.destroy', $livro) }}" method="POST" onsubmit="return confirm('Tem certeza que deseja excluir este livro?')">
+                    @csrf
+                    @method('DELETE')
+                    <x-botao variante="perigo" icone="excluir">Excluir</x-botao>
+                </form>
+            @endcan
+        </x-cabecalho>
     </x-slot>
 
     <div class="py-8">
-        <div class="max-w-3xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white shadow-sm sm:rounded-lg p-6">
-                @include('partials.mensagens')
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+            @include('partials.mensagens')
 
-                <dl class="space-y-3">
-                    <div>
-                        <dt class="text-sm text-gray-500">Título</dt>
-                        <dd class="text-lg">{{ $livro->titulo }}</dd>
-                    </div>
-                    <div>
-                        <dt class="text-sm text-gray-500">Ano de publicação</dt>
-                        <dd class="text-lg">{{ $livro->ano ?? 'Não informado' }}</dd>
-                    </div>
-                    <div>
-                        <dt class="text-sm text-gray-500">Autor</dt>
-                        <dd class="text-lg"><a href="{{ route('autores.show', $livro->autor) }}" class="text-blue-600 underline">{{ $livro->autor->nome }}</a></dd>
-                    </div>
-                    <div>
-                        <dt class="text-sm text-gray-500">Cadastrado em</dt>
-                        <dd>{{ $livro->created_at->format('d/m/Y H:i') }}</dd>
-                    </div>
-                </dl>
+            <x-card class="p-6 sm:p-8">
+                <div class="flex flex-col sm:flex-row gap-8">
+                    @include('livros.capa', ['livro' => $livro, 'tamanho' => 'grande'])
 
-                <div class="mt-6 space-x-2">
-                    <a href="{{ route('livros.index') }}" class="text-gray-700 underline">Voltar</a>
+                    <div class="flex-1">
+                        <h2 class="text-xl font-bold text-slate-900">{{ $livro->titulo }}</h2>
+                        <p class="mt-1 text-slate-500">
+                            por <a href="{{ route('autores.show', $livro->autor) }}" class="font-medium text-indigo-600 hover:text-indigo-500">{{ $livro->autor->nome }}</a>
+                        </p>
 
-                    @can('update', $livro)
-                        <a href="{{ route('livros.edit', $livro) }}" class="text-blue-600 underline">Editar</a>
-                    @endcan
+                        <dl class="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div class="rounded-lg bg-slate-50 p-4">
+                                <dt class="flex items-center gap-1.5 text-xs font-medium uppercase tracking-wide text-slate-500">
+                                    <x-icone nome="calendario" class="w-4 h-4" /> Ano de publicação
+                                </dt>
+                                <dd class="mt-1 text-lg font-semibold text-slate-900">{{ $livro->ano ?? 'Não informado' }}</dd>
+                            </div>
+                            <div class="rounded-lg bg-slate-50 p-4">
+                                <dt class="flex items-center gap-1.5 text-xs font-medium uppercase tracking-wide text-slate-500">
+                                    <x-icone nome="globo" class="w-4 h-4" /> Nacionalidade do autor
+                                </dt>
+                                <dd class="mt-1 text-lg font-semibold text-slate-900">{{ $livro->autor->nacionalidade ?? 'Não informada' }}</dd>
+                            </div>
+                        </dl>
 
-                    @can('delete', $livro)
-                        <form action="{{ route('livros.destroy', $livro) }}" method="POST" class="inline" onsubmit="return confirm('Tem certeza que deseja excluir este livro?')">
-                            @csrf
-                            @method('DELETE')
-                            <button type="submit" class="text-red-600 underline">Excluir</button>
-                        </form>
-                    @endcan
+                        <p class="mt-6 text-xs text-slate-400">Cadastrado em {{ $livro->created_at->format('d/m/Y \à\s H:i') }}</p>
+                    </div>
                 </div>
-            </div>
+            </x-card>
         </div>
     </div>
 </x-app-layout>

@@ -7,7 +7,7 @@ Sistema web de controle de uma biblioteca, desenvolvido com Laravel como projeto
 | Integrante | Atividades realizadas |
 |---|---|
 | Lauro Santos ([@lauro-coder](https://github.com/lauro-coder)) | Criação do projeto e instalação do Laravel Breeze; campo `role` na tabela `users`; middleware `CheckRole` e seu alias; models e migrations de `Autor` e `Livro`; CRUD inicial de livros (listar, cadastrar, editar e excluir); seeders de autores e livros; restrição das telas por nível de acesso. |
-| EJSeguro ([@EJSeguro](https://github.com/EJSeguro)) | Seeder de usuários para os três níveis; Form Requests (`LivroRequest`, `AutorRequest`, `UpdateUserRoleRequest`); Policies (`LivroPolicy`, `AutorPolicy`) e tela de visualização de livros; CRUD de autores com a listagem dos livros de cada autor; área administrativa de usuários; menu de navegação, dashboard e página inicial; testes automatizados; README. |
+| EJSeguro ([@EJSeguro](https://github.com/EJSeguro)) | Seeder de usuários para os três níveis; Form Requests (`LivroRequest`, `AutorRequest`, `UpdateUserRoleRequest`); Policies (`LivroPolicy`, `AutorPolicy`) e tela de visualização de livros; CRUD de autores com a listagem dos livros de cada autor; área administrativa de usuários; menu de navegação, dashboard e página inicial; identidade visual com componentes Blade e tradução das telas para português; testes automatizados; README. |
 
 ## Descrição
 
@@ -21,6 +21,7 @@ O sistema permite cadastrar **autores** e **livros**. Cada autor possui vários 
 - Dashboard com totais e os últimos livros cadastrados
 - Área administrativa (`/admin/usuarios`) para alterar o nível de acesso e excluir usuários
 - Mensagens de sucesso, de erro e de validação nos formulários
+- Interface em português, responsiva, montada com componentes Blade reutilizáveis (`resources/views/components`)
 
 ### Controle de acesso
 
@@ -40,7 +41,7 @@ Quem cria uma conta pela tela de cadastro recebe o nível **usuário**. Só o ad
 |---|---|
 | Models | `app/Models/Livro.php`, `app/Models/Autor.php`, `app/Models/User.php` |
 | Controllers | `LivroController`, `AutorController`, `DashboardController`, `Admin/UserController` |
-| Views (Blade) | `resources/views/livros`, `resources/views/autores`, `resources/views/admin/usuarios`, `resources/views/dashboard.blade.php` |
+| Views (Blade) | componentes em `resources/views/components` (`x-botao`, `x-card`, `x-cabecalho`, `x-icone`...), `resources/views/livros`, `resources/views/autores`, `resources/views/admin/usuarios`, `resources/views/dashboard.blade.php` |
 | Migrations | `database/migrations` (`users` com `role`, `autores`, `livros` com a chave estrangeira `autor_id`) |
 | Seeders | `UserSeeder`, `AutorSeeder`, `LivroSeeder` |
 | Relacionamento | `Autor::livros()` (hasMany) e `Livro::autor()` (belongsTo) |
