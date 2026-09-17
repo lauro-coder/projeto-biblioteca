@@ -2,93 +2,73 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+use App\Http\Requests\LivroRequest;
 use App\Models\Livro;
 use App\Models\Autor;
+use Illuminate\Support\Facades\Gate;
 
 class LivroController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
-{
-    $livros = Livro::with('autor')->get();
-
-    return view('livros.index', compact('livros'));
-}
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-{
-    $autores = Autor::all();
-
-    return view('livros.create', compact('autores'));
-}
-
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-{
-    $dados = $request->validate([
-        'titulo' => 'required|min:3',
-        'ano' => 'nullable|integer',
-        'autor_id' => 'required|exists:autores,id',
-    ]);
-
-    Livro::create($dados);
-
-    return redirect()->route('livros.index')->with('sucesso', 'Livro cadastrado com sucesso');
-}
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
     {
-        //
+        Gate::authorize('viewAny', Livro::class);
+
+        $livros = Livro::with('autor')->orderBy('titulo')->get();
+
+        return view('livros.index', compact('livros'));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-{
-    $livro = Livro::findOrFail($id);
-    $autores = Autor::all();
+    public function show(Livro $livro)
+    {
+        Gate::authorize('view', $livro);
 
-    return view('livros.edit', compact('livro', 'autores'));
-}
+        $livro->load('autor');
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-{
-    $livro = Livro::findOrFail($id);
+        return view('livros.show', compact('livro'));
+    }
 
-    $dados = $request->validate([
-        'titulo' => 'required|min:3',
-        'ano' => 'nullable|integer',
-        'autor_id' => 'required|exists:autores,id',
-    ]);
+    public function create()
+    {
+        Gate::authorize('create', Livro::class);
 
-    $livro->update($dados);
+        $autores = Autor::orderBy('nome')->get();
 
-    return redirect()->route('livros.index')->with('sucesso', 'Livro atualizado com sucesso!');
-}
+        return view('livros.create', compact('autores'));
+    }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-{
-    $livro = Livro::findOrFail($id);
-    $livro->delete();
+    public function store(LivroRequest $request)
+    {
+        Gate::authorize('create', Livro::class);
 
-    return redirect()->route('livros.index')->with('sucesso', 'Livro excluído com sucesso!');
-}
+        Livro::create($request->validated());
+
+        return redirect()->route('livros.index')->with('sucesso', 'Livro cadastrado com sucesso!');
+    }
+
+    public function edit(Livro $livro)
+    {
+        Gate::authorize('update', $livro);
+
+        $autores = Autor::orderBy('nome')->get();
+
+        return view('livros.edit', compact('livro', 'autores'));
+    }
+
+    public function update(LivroRequest $request, Livro $livro)
+    {
+        Gate::authorize('update', $livro);
+
+        $livro->update($request->validated());
+
+        return redirect()->route('livros.show', $livro)->with('sucesso', 'Livro atualizado com sucesso!');
+    }
+
+    public function destroy(Livro $livro)
+    {
+        Gate::authorize('delete', $livro);
+
+        $livro->delete();
+
+        return redirect()->route('livros.index')->with('sucesso', 'Livro excluído com sucesso!');
+    }
 }

@@ -1,43 +1,27 @@
 <x-app-layout>
-    <div class="p-6">
-        <h1 class="text-2xl font-bold mb-4">Editar Livro</h1>
+    <x-slot name="header">
+        <x-cabecalho titulo="Editar livro" :subtitulo="$livro->titulo" :voltar="route('livros.show', $livro)" />
+    </x-slot>
 
-        @if ($errors->any())
-            <div class="bg-red-100 text-red-800 p-3 rounded mb-4">
-                <ul>
-                    @foreach ($errors->all() as $erro)
-                        <li>{{ $erro }}</li>
-                    @endforeach
-                </ul>
-            </div>
-        @endif
+    <div class="py-8">
+        <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+            @include('partials.mensagens')
 
-        <form method="POST" action="{{ route('livros.update', $livro->id) }}">
-            @csrf
-            @method('PUT')
+            <x-card>
+                <form method="POST" action="{{ route('livros.update', $livro) }}">
+                    @csrf
+                    @method('PUT')
 
-            <div class="mb-3">
-                <label>Título</label>
-                <input type="text" name="titulo" value="{{ old('titulo', $livro->titulo) }}" class="border w-full p-2">
-            </div>
+                    <div class="p-6 sm:p-8">
+                        @include('livros.form')
+                    </div>
 
-            <div class="mb-3">
-                <label>Ano</label>
-                <input type="number" name="ano" value="{{ old('ano', $livro->ano) }}" class="border w-full p-2">
-            </div>
-
-            <div class="mb-3">
-                <label>Autor</label>
-                <select name="autor_id" class="border w-full p-2">
-                    @foreach ($autores as $autor)
-                        <option value="{{ $autor->id }}" @selected($autor->id == $livro->autor_id)>
-                            {{ $autor->nome }}
-                        </option>
-                    @endforeach
-                </select>
-            </div>
-
-            <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded">Salvar Alterações</button>
-        </form>
+                    <div class="flex justify-end gap-2 border-t border-slate-200 bg-slate-50 px-6 py-4 rounded-b-xl">
+                        <x-botao :href="route('livros.show', $livro)" variante="secundario">Cancelar</x-botao>
+                        <x-botao icone="sucesso">Salvar alterações</x-botao>
+                    </div>
+                </form>
+            </x-card>
+        </div>
     </div>
 </x-app-layout>
