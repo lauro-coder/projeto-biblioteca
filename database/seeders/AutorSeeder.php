@@ -12,5 +12,6 @@ class AutorSeeder extends Seeder
         Autor::create(['nome' => 'Machado de Assis', 'nacionalidade' => 'Brasileira']);
         Autor::create(['nome' => 'Jose Saramago', 'nacionalidade' => 'Portuguesa']);
         Autor::create(['nome' => 'Clarice Lispector', 'nacionalidade' => 'Brasileira']);
+        Autor::create(['nome' => 'George Orwell', 'nacionalidade' => 'Britanica']);
     }
 }
