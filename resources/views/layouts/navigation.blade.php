@@ -15,6 +15,17 @@
                     <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                         {{ __('Dashboard') }}
                     </x-nav-link>
+                    <x-nav-link :href="route('livros.index')" :active="request()->routeIs('livros.*')">
+                        Livros
+                    </x-nav-link>
+                    <x-nav-link :href="route('autores.index')" :active="request()->routeIs('autores.*')">
+                        Autores
+                    </x-nav-link>
+                    @if (Auth::user()->isAdmin())
+                        <x-nav-link :href="route('admin.usuarios.index')" :active="request()->routeIs('admin.*')">
+                            Usuários
+                        </x-nav-link>
+                    @endif
                 </div>
             </div>
 
@@ -23,7 +34,7 @@
                 <x-dropdown align="right" width="48">
                     <x-slot name="trigger">
                         <button class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 bg-white hover:text-gray-700 focus:outline-none transition ease-in-out duration-150">
-                            <div>{{ Auth::user()->name }}</div>
+                            <div>{{ Auth::user()->name }} <span class="text-xs text-gray-400">({{ Auth::user()->nomeRole() }})</span></div>
 
                             <div class="ms-1">
                                 <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
@@ -70,6 +81,17 @@
             <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                 {{ __('Dashboard') }}
             </x-responsive-nav-link>
+            <x-responsive-nav-link :href="route('livros.index')" :active="request()->routeIs('livros.*')">
+                Livros
+            </x-responsive-nav-link>
+            <x-responsive-nav-link :href="route('autores.index')" :active="request()->routeIs('autores.*')">
+                Autores
+            </x-responsive-nav-link>
+            @if (Auth::user()->isAdmin())
+                <x-responsive-nav-link :href="route('admin.usuarios.index')" :active="request()->routeIs('admin.*')">
+                    Usuários
+                </x-responsive-nav-link>
+            @endif
         </div>
 
         <!-- Responsive Settings Options -->
