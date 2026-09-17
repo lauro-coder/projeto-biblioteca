@@ -1,58 +1,130 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Biblioteca
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Sistema web de controle de uma biblioteca, desenvolvido com Laravel como projeto final da disciplina.
 
-## About Laravel
+## Integrantes
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+| Integrante | Atividades realizadas |
+|---|---|
+| Lauro Santos ([@lauro-coder](https://github.com/lauro-coder)) | Criação do projeto e instalação do Laravel Breeze; campo `role` na tabela `users`; middleware `CheckRole` e seu alias; models e migrations de `Autor` e `Livro`; CRUD inicial de livros (listar, cadastrar, editar e excluir); seeders de autores e livros; restrição das telas por nível de acesso. |
+| EJSeguro ([@EJSeguro](https://github.com/EJSeguro)) | Seeder de usuários para os três níveis; Form Requests (`LivroRequest`, `AutorRequest`, `UpdateUserRoleRequest`); Policies (`LivroPolicy`, `AutorPolicy`) e tela de visualização de livros; CRUD de autores com a listagem dos livros de cada autor; área administrativa de usuários; menu de navegação, dashboard e página inicial; testes automatizados; README. |
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## Descrição
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+O sistema permite cadastrar **autores** e **livros**. Cada autor possui vários livros (relacionamento `hasMany` / `belongsTo` com Eloquent). O acesso é feito com login (Laravel Breeze), e o que cada pessoa pode fazer depende do seu nível de acesso: **admin**, **bibliotecário** ou **usuário**.
 
-## Learning Laravel
+### Funcionalidades
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+- Cadastro, login e logout de usuários (Laravel Breeze)
+- CRUD completo de **livros**: listar, visualizar, cadastrar, editar e excluir
+- CRUD completo de **autores**, com a página do autor listando os seus livros
+- Dashboard com totais e os últimos livros cadastrados
+- Área administrativa (`/admin/usuarios`) para alterar o nível de acesso e excluir usuários
+- Mensagens de sucesso, de erro e de validação nos formulários
 
-In addition, [Laracasts](https://laracasts.com) contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+### Controle de acesso
 
-You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
+| Funcionalidade | Admin | Bibliotecário | Usuário |
+|---|:---:|:---:|:---:|
+| Visualizar livros e autores | ✅ | ✅ | ✅ |
+| Cadastrar livros e autores | ✅ | ✅ | ❌ |
+| Editar livros e autores | ✅ | ✅ | ❌ |
+| Excluir livros e autores | ✅ | ❌ | ❌ |
+| Gerenciar usuários | ✅ | ❌ | ❌ |
 
-## Agentic Development
+Quem cria uma conta pela tela de cadastro recebe o nível **usuário**. Só o admin pode alterar o nível de acesso.
 
-Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
+### Onde cada recurso do Laravel é usado
+
+| Recurso | Arquivos |
+|---|---|
+| Models | `app/Models/Livro.php`, `app/Models/Autor.php`, `app/Models/User.php` |
+| Controllers | `LivroController`, `AutorController`, `DashboardController`, `Admin/UserController` |
+| Views (Blade) | `resources/views/livros`, `resources/views/autores`, `resources/views/admin/usuarios`, `resources/views/dashboard.blade.php` |
+| Migrations | `database/migrations` (`users` com `role`, `autores`, `livros` com a chave estrangeira `autor_id`) |
+| Seeders | `UserSeeder`, `AutorSeeder`, `LivroSeeder` |
+| Relacionamento | `Autor::livros()` (hasMany) e `Livro::autor()` (belongsTo) |
+| Middleware | `app/Http/Middleware/CheckRole.php`, registrado como `role` em `bootstrap/app.php` e aplicado às rotas de cadastro/edição (`role:admin,bibliotecario`) e à área `/admin` (`role:admin`) |
+| Policies | `app/Policies/LivroPolicy.php` e `app/Policies/AutorPolicy.php`, usadas nos controllers (`Gate::authorize`) e nas views (`@can`). Só o admin pode excluir |
+| Form Requests | `app/Http/Requests/LivroRequest.php`, `AutorRequest.php`, `UpdateUserRoleRequest.php` |
+
+### Rotas principais
+
+| Rota | Descrição |
+|---|---|
+| `/livros` | Lista de livros |
+| `/livros/criar` | Cadastro de livro |
+| `/livros/{id}` | Detalhes do livro |
+| `/livros/{id}/editar` | Edição de livro |
+| `/autores` | Lista de autores |
+| `/autores/criar` | Cadastro de autor |
+| `/autores/{id}` | Detalhes do autor e os seus livros |
+| `/autores/{id}/editar` | Edição de autor |
+| `/admin/usuarios` | Gerenciamento de usuários (somente admin) |
+
+## Tecnologias utilizadas
+
+- PHP 8.3+
+- Laravel 13
+- Laravel Breeze (Blade)
+- Blade
+- Tailwind CSS e Vite
+- SQLite (padrão do `.env.example`; também funciona com MySQL ou PostgreSQL)
+
+## Instalação
+
+Pré-requisitos: PHP 8.3+, Composer e Node.js.
 
 ```bash
-composer require laravel/boost --dev
+git clone https://github.com/lauro-coder/projeto-biblioteca.git
+cd projeto-biblioteca
 
-php artisan boost:install
+composer install
+cp .env.example .env
+php artisan key:generate
+
+npm install
+npm run build
 ```
 
-Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
+O `.env.example` usa SQLite. Crie o arquivo do banco antes de rodar as migrations:
 
-## Contributing
+```bash
+touch database/database.sqlite
+```
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+No Windows (PowerShell): `New-Item database/database.sqlite`.
 
-## Code of Conduct
+Para usar MySQL ou PostgreSQL, ajuste `DB_CONNECTION`, `DB_HOST`, `DB_PORT`, `DB_DATABASE`, `DB_USERNAME` e `DB_PASSWORD` no `.env`.
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+Crie as tabelas e os dados de teste:
 
-## Security Vulnerabilities
+```bash
+php artisan migrate:fresh --seed
+```
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+## Execução
 
-## License
+```bash
+php artisan serve
+```
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+Acesse http://localhost:8000.
+
+Durante o desenvolvimento, dá para usar `npm run dev` em outro terminal no lugar do `npm run build`.
+
+Para rodar os testes automatizados:
+
+```bash
+php artisan test
+```
+
+## Usuários para teste
+
+Criados pelo `UserSeeder`:
+
+| Nível | E-mail | Senha |
+|---|---|---|
+| Administrador | admin@email.com | 12345678 |
+| Bibliotecário | bibliotecario@email.com | 12345678 |
+| Usuário | usuario@email.com | 12345678 |
