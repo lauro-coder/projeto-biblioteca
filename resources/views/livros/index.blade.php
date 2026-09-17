@@ -29,7 +29,7 @@
                                 <tr class="border-b">
                                     <td class="py-2">{{ $livro->titulo }}</td>
                                     <td class="py-2">{{ $livro->ano ?? '-' }}</td>
-                                    <td class="py-2">{{ $livro->autor->nome }}</td>
+                                    <td class="py-2"><a href="{{ route('autores.show', $livro->autor) }}" class="underline">{{ $livro->autor->nome }}</a></td>
                                     <td class="py-2 space-x-2">
                                         <a href="{{ route('livros.show', $livro) }}" class="text-gray-700 underline">Ver</a>
 

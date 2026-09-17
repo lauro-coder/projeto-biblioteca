@@ -19,7 +19,7 @@
                     </div>
                     <div>
                         <dt class="text-sm text-gray-500">Autor</dt>
-                        <dd class="text-lg">{{ $livro->autor->nome }}</dd>
+                        <dd class="text-lg"><a href="{{ route('autores.show', $livro->autor) }}" class="text-blue-600 underline">{{ $livro->autor->nome }}</a></dd>
                     </div>
                     <div>
                         <dt class="text-sm text-gray-500">Cadastrado em</dt>
